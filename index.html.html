@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELSTAY — брони без комиссий</title>
+<meta name="description" content="Платформа бронирования для глэмпингов, турбаз и гостевых домов. 0% комиссии, шахматка, заявки и допы в одном окне.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg:#f5f5f7;
+  --surface:rgba(255,255,255,.72);
+  --surface-strong:#ffffff;
+  --text:#0a0a0c;
+  --muted:#6e6e76;
+  --line:rgba(10,10,12,.08);
+  --accent:#0066ff;
+  --accent-soft:rgba(0,102,255,.08);
+  --gold:#c8a45c;
+  --shadow:0 20px 60px rgba(10,10,12,.08);
+  --radius:24px;
+}
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.55;
+  overflow-x:hidden;
+}
+.aurora{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+}
+.aurora::before,.aurora::after{
+  content:"";position:absolute;border-radius:50%;filter:blur(120px);opacity:.5;
+}
+.aurora::before{width:720px;height:720px;top:-280px;right:-160px;background:radial-gradient(circle,#bfd8ff,transparent 65%)}
+.aurora::after{width:640px;height:640px;bottom:-260px;left:-180px;background:radial-gradient(circle,#ffe9c9,transparent 65%)}
+
+nav{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);
+  z-index:100;
+  width:min(1040px,calc(100% - 32px));
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 22px;
+  border-radius:999px;
+  background:var(--surface);
+  backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
+  border:1px solid rgba(255,255,255,.5);
+  box-shadow:0 8px 32px rgba(10,10,12,.08);
+}
+.brand{font-weight:800;font-size:19px;letter-spacing:-.02em}
+.brand span{color:var(--accent)}
+.nav-links{display:flex;gap:6px;align-items:center}
+.nav-links a{
+  color:var(--muted);text-decoration:none;font-size:14.5px;font-weight:600;
+  padding:8px 14px;border-radius:999px;transition:.25s;
+}
+.nav-links a:hover{color:var(--text);background:rgba(10,10,12,.05)}
+.nav-cta{
+  background:var(--text);color:#fff !important;
+  padding:10px 20px;border-radius:999px;font-size:14.5px;font-weight:700;
+  transition:.25s;
+}
+.nav-cta:hover{background:var(--accent);transform:translateY(-1px)}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:8px}
+.burger span{display:block;width:20px;height:2px;background:var(--text);margin:4px 0;border-radius:2px}
+
+section{max-width:1040px;margin:0 auto;padding:110px 24px 0}
+.eyebrow{
+  font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:16px;
+}
+h1{
+  font-size:clamp(44px,7.2vw,84px);font-weight:800;letter-spacing:-.035em;line-height:1.03;
+}
+h2{font-size:clamp(32px,4.6vw,54px);font-weight:800;letter-spacing:-.03em;line-height:1.08}
+.lead{font-size:clamp(18px,2.2vw,23px);color:var(--muted);font-weight:500;max-width:640px;margin-top:22px}
+
+.hero{padding-top:190px;text-align:left}
+.hero .lead{max-width:600px}
+.hero-btns{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap}
+.btn{
+  display:inline-block;text-decoration:none;font-weight:700;font-size:16px;
+  padding:16px 30px;border-radius:999px;transition:.25s;cursor:pointer;border:0;
+}
+.btn-dark{background:var(--text);color:#fff}
+.btn-dark:hover{background:var(--accent);transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,102,255,.28)}
+.btn-ghost{background:var(--surface-strong);color:var(--text);border:1px solid var(--line)}
+.btn-ghost:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.hero-note{margin-top:18px;font-size:14px;color:var(--muted);font-weight:500}
+
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:64px;
+}
+.stat{
+  background:var(--surface);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:var(--radius);padding:28px;
+  box-shadow:0 10px 40px rgba(10,10,12,.05);
+}
+.stat b{display:block;font-size:clamp(30px,4vw,44px);font-weight:800;letter-spacing:-.03em}
+.stat span{color:var(--muted);font-weight:600;font-size:14.5px}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
+.card{
+  background:var(--surface);
+  backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:var(--radius);padding:32px 28px;
+  box-shadow:0 12px 44px rgba(10,10,12,.06);
+  transition:.3s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 24px 60px rgba(10,10,12,.1)}
+.card h3{font-size:21px;font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
+.card p{color:var(--muted);font-size:15.5px;font-weight:500}
+
+.steps{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{
+  background:var(--surface-strong);
+  border:1px solid var(--line);
+  border-radius:var(--radius);padding:34px 28px;
+  box-shadow:0 10px 36px rgba(10,10,12,.05);
+}
+.step-num{
+  width:44px;height:44px;border-radius:14px;background:var(--accent-soft);color:var(--accent);
+  font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;
+}
+.step h3{font-size:19px;font-weight:800;margin-bottom:8px}
+.step p{color:var(--muted);font-size:15px;font-weight:500}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;margin-top:24px}
+.split .point{padding:18px 0;border-bottom:1px solid var(--line)}
+.split .point:last-child{border-bottom:0}
+.split .point b{display:block;font-size:17px;font-weight:800;margin-bottom:4px}
+.split .point span{color:var(--muted);font-size:14.5px;font-weight:500}
+.mock{
+  background:var(--surface-strong);border:1px solid var(--line);border-radius:28px;
+  padding:22px;box-shadow:var(--shadow);
+}
+.mock-row{display:flex;gap:8px;margin-top:8px}
+.mock-cell{flex:1;height:52px;border-radius:12px;background:#f2f2f5;font-size:12.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.mock-cell.busy{background:var(--accent);color:#fff}
+.mock-cell.res{height:34px;font-size:11.5px}
+.mock-cell.res.busy{background:#7a4fd0}
+.mock-label{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:14px}
+
+.pricing{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:56px}
+.price-card{
+  background:var(--surface);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:28px;padding:40px 34px;
+  box-shadow:0 12px 44px rgba(10,10,12,.06);
+}
+.price-card.featured{background:#0a0a0c;color:#fff;border:1px solid rgba(255,255,255,.12)}
+.price-card .tag{font-size:12.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.price-card.featured .tag{color:var(--gold)}
+.price{font-size:clamp(38px,5vw,56px);font-weight:800;letter-spacing:-.03em;margin:14px 0 4px}
+.price small{font-size:17px;font-weight:600;color:var(--muted)}
+.price-card.featured .price small{color:rgba(255,255,255,.55)}
+.price-card ul{list-style:none;margin-top:22px}
+.price-card li{padding:9px 0;font-size:15.5px;font-weight:600;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
+.price-card.featured li{color:rgba(255,255,255,.78)}
+.tick{color:var(--accent);font-weight:800;flex-shrink:0}
+.price-card.featured .tick{color:var(--gold)}
+
+.form-wrap{
+  background:#0a0a0c;color:#fff;border-radius:36px;padding:64px 48px;margin-top:0;
+  box-shadow:0 40px 100px rgba(10,10,12,.25);
+}
+.form-wrap h2{color:#fff}
+.form-wrap .lead{color:rgba(255,255,255,.6)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:40px}
+.form-grid .full{grid-column:1/-1}
+.field input,.field textarea{
+  width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;padding:16px 18px;color:#fff;font-family:inherit;font-size:15.5px;font-weight:600;
+  transition:.25s;outline:none;
+}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.4)}
+.field input:focus,.field textarea:focus{border-color:var(--accent);background:rgba(255,255,255,.1)}
+.field label{display:block;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px}
+.form-note{margin-top:18px;font-size:13.5px;color:rgba(255,255,255,.45);font-weight:500}
+.btn-gold{background:var(--gold);color:#0a0a0c;width:100%;padding:18px;font-size:16.5px}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 44px rgba(200,164,92,.35)}
+
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#0a0a0c;color:#fff;padding:15px 26px;border-radius:999px;
+  font-size:14.5px;font-weight:700;box-shadow:0 16px 50px rgba(10,10,12,.35);
+  opacity:0;transition:.4s cubic-bezier(.2,.9,.3,1.2);z-index:200;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+footer{margin-top:120px;border-top:1px solid var(--line)}
+.foot-in{max-width:1040px;margin:0 auto;padding:44px 24px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.foot-in span{color:var(--muted);font-size:14px;font-weight:600}
+.foot-in a{color:var(--muted);text-decoration:none;font-weight:600;font-size:14px}
+.foot-in a:hover{color:var(--text)}
+
+@media(max-width:860px){
+  .nav-links{position:fixed;top:76px;left:16px;right:16px;flex-direction:column;align-items:stretch;
+    background:rgba(255,255,255,.92);backdrop-filter:blur(24px);border-radius:24px;padding:14px;
+    border:1px solid rgba(255,255,255,.6);box-shadow:var(--shadow);display:none}
+  .nav-links.open{display:flex}
+  .burger{display:block}
+  .cards,.steps,.split,.pricing{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .form-wrap{padding:44px 24px}
+  .form-grid{grid-template-columns:1fr}
+  section{padding-top:80px}
+  .hero{padding-top:140px}
+}
+</style>
+</head>
+<body>
+
+<div class="aurora"></div>
+
+<nav>
+  <a href="#" style="text-decoration:none;color:inherit"><div class="brand">DEL<span>STAY</span></div></a>
+  <div class="nav-links" id="menu">
+    <a href="#about">О платформе</a>
+    <a href="#how">Как работает</a>
+    <a href="#features">Возможности</a>
+    <a href="#pricing">Тариф</a>
+    <a href="#demo" class="nav-cta">Запросить демо</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow">Платформа бронирования</div>
+  <h1>Брони — вам.<br>Комиссии — никому.</h1>
+  <p class="lead">DELSTAY — операционная система для глэмпингов, турбаз и гостевых домов. Прямые брони без комиссий агрегаторов: шахматка, заявки, допы и деньги на одном экране.</p>
+  <div class="hero-btns">
+    <a href="#demo" class="btn btn-dark">Запросить демо</a>
+    <a href="#about" class="btn btn-ghost">О платформе</a>
+  </div>
+  <div class="hero-note">Первые объекты — бесплатно. Дальше фикс 2 500 ₽ в месяц. Ноль процентов с броней — всегда.</div>
+  <div class="stats">
+    <div class="stat"><b>0%</b><span>комиссия с каждой брони</span></div>
+    <div class="stat"><b>1 экран</b><span>шахматка, заявки и деньги вместе</span></div>
+    <div class="stat"><b>15 мин</b><span>на подключение объекта</span></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="eyebrow">Кто мы</div>
+  <h2>Мы делаем прямой канал продаж для малых объектов туризма</h2>
+  <p class="lead">Глэмпинг на шесть куполов не нужен отельной системе с внедрением. Ему нужна шахматка, заявки гостей и деньги без потерь на комиссии — и всё это за один вечер, без айтишника.</p>
+  <div class="cards">
+    <div class="card">
+      <h3>Ноль комиссии</h3>
+      <p>Агрегаторы забирают 15–25% с каждой ночёвки. DELSTAY берёт фикс подписки и не касается вашей выручки — бронь идёт напрямую от гостя к вам.</p>
+    </div>
+    <div class="card">
+      <h3>Вертикализация на нишу</h3>
+      <p>Мы построены под мелкий региональный туризм: домики, купола, базы. Крупные отельевые системы в эту нишу не идут — а мы знаем её сценарии наизусть.</p>
+    </div>
+    <div class="card">
+      <h3>Допы — в ядре</h3>
+      <p>Баня, купель, чан, завтрак — не галочка сбоку, а полноценные ресурсы с почасовыми слотами в той же шахматке, что и проживание.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="eyebrow">Как работает</div>
+  <h2>Три шага до первой брони</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Подключаете объект</h3>
+      <p>Юниты, цены по дням недели и праздникам, допы и их слоты. Пятнадцать минут без интеграторов и договоров на внедрение.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Гость бронирует напрямую</h3>
+      <p>Витрина объекта со свободными датами, допами и пакетами. Заявка падает вам мгновенно — без посредников и их процента.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Принимаете и видите деньги</h3>
+      <p>Один клик — и бронь легла в шахматку: проживание по суткам, баня и купель по часам. Выручка и загрузка — на одном экране.</p>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="eyebrow">Возможности</div>
+  <h2>Всё, что раньше было в тетрадке и переписке</h2>
+  <div class="split">
+    <div>
+      <div class="point"><b>Двухэтажная шахматка</b><span>Проживание по суткам сверху, ресурсы с почасовыми слотами снизу. Система сама следит за конфликтами.</span></div>
+      <div class="point"><b>Допы в чеке брони</b><span>Баня, купель, пакет «дом + купель» — сумма пересчитывается на лету, выручка по допам видна отдельно.</span></div>
+      <div class="point"><b>Динамические цены</b><span>Будни, выходные и праздники — свой тариф на каждый день, гость видит цену прямо в календаре.</span></div>
+      <div class="point"><b>Заявки без перезагрузки</b><span>Заявка с витрины появляется в кабинете мгновенно. Приняли — даты закрылись для остальных гостей.</span></div>
+      <div class="point"><b>QR-запись для гостей</b><span>Гость в домике сканирует код и сам записывается на баню. Заявка приходит вам, слот бронируется.</span></div>
+    </div>
+    <div class="mock">
+      <div class="mock-label">Шахматка объекта</div>
+      <div class="mock-row"><div class="mock-cell">13</div><div class="mock-cell">14</div><div class="mock-cell busy">15 — 9 900</div><div class="mock-cell busy">16 — 9 900</div><div class="mock-cell">17</div></div>
+      <div class="mock-row"><div class="mock-cell">18</div><div class="mock-cell">19</div><div class="mock-cell">20</div><div class="mock-cell">21</div><div class="mock-cell">22</div></div>
+      <div class="mock-label">Ресурсы — почасовые слоты</div>
+      <div class="mock-row"><div class="mock-cell res">11:00</div><div class="mock-cell res busy">15:00</div><div class="mock-cell res">19:00</div></div>
+      <div class="mock-row"><div class="mock-cell res">11:00</div><div class="mock-cell res">15:00</div><div class="mock-cell res busy">19:00</div></div>
+      <div class="mock-label" style="color:var(--accent)">Бронь дома + купель в одной сетке</div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="eyebrow">Тариф</div>
+  <h2>Честная цена без сюрпризов</h2>
+  <p class="lead">Никаких процентов с выручки и скрытых доплат. Платите за инструмент — оставляйте деньги от броней себе.</p>
+  <div class="pricing">
+    <div class="price-card">
+      <div class="tag">Старт</div>
+      <div class="price">0 ₽</div>
+      <small style="color:var(--muted);font-weight:600">первые объекты платформы</small>
+      <ul>
+        <li><span class="tick">—</span>Полная шахматка с юнитами и ресурсами</li>
+        <li><span class="tick">—</span>Витрина объекта и приём заявок</li>
+        <li><span class="tick">—</span>Допы и пакеты в чеке брони</li>
+        <li><span class="tick">—</span>0% комиссии — навсегда</li>
+      </ul>
+    </div>
+    <div class="price-card featured">
+      <div class="tag">Постоянный тариф</div>
+      <div class="price">2 500 ₽ <small>/ месяц за объект</small></div>
+      <small style="color:rgba(255,255,255,.55);font-weight:600">фикс — независимо от оборота</small>
+      <ul>
+        <li><span class="tick">—</span>Всё из тарифа «Старт»</li>
+        <li><span class="tick">—</span>Динамические цены по календарю</li>
+        <li><span class="tick">—</span>QR-запись гостей на допы</li>
+        <li><span class="tick">—</span>Аналитика загрузки и выручки</li>
+        <li><span class="tick">—</span>Поддержка в мессенджере</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="form-wrap">
+    <div class="eyebrow" style="color:var(--gold)">Демо</div>
+    <h2>Покажем систему на вашем объекте</h2>
+    <p class="lead">Оставьте заявку — соберём персональное демо под ваш объект: ваши юниты, ваши цены, ваши допы. Отправим ответ на почту delstayrussia@mail.ru.</p>
+    <form id="demo-form" novalidate>
+      <div class="form-grid">
+        <div class="field"><label for="f-name">Имя</label><input id="f-name" type="text" placeholder="Как к вам обращаться" required></div>
+        <div class="field"><label for="f-contact">Телефон или мессенджер</label><input id="f-contact" type="text" placeholder="+7 900 000-00-00" required></div>
+        <div class="field full"><label for="f-object">Объект</label><input id="f-object" type="text" placeholder="Глэмпинг, турбаза, гостевой дом — название и город"></div>
+        <div class="field full"><label for="f-msg">Что важно решить</label><textarea id="f-msg" rows="3" placeholder="Например: заявки в WhatsApp, бани в тетрадке, комиссии агрегаторов"></textarea></div>
+        <div class="field full"><button type="submit" class="btn btn-gold">Отправить заявку</button></div>
+      </div>
+      <div class="form-note">Заявка откроется в вашем почтовом клиенте — останется нажать «Отправить». Письмо уйдёт на delstayrussia@mail.ru.</div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-in">
+    <div class="brand">DEL<span>STAY</span></div>
+    <a href="mailto:delstayrussia@mail.ru">delstayrussia@mail.ru</a>
+    <span>Брони — вам. Комиссии — никому.</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  var menu=document.getElementById('menu');
+  var burger=document.getElementById('burger');
+  burger.addEventListener('click',function(){menu.classList.toggle('open');});
+  menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){menu.classList.remove('open');});});
+
+  var toast=document.getElementById('toast');
+  var toastTimer;
+  function showToast(text){
+    toast.textContent=text;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){toast.classList.remove('show');},3500);
+  }
+
+  var form=document.getElementById('demo-form');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=document.getElementById('f-name').value.trim();
+    var contact=document.getElementById('f-contact').value.trim();
+    var object=document.getElementById('f-object').value.trim();
+    var msg=document.getElementById('f-msg').value.trim();
+    if(!name||!contact){showToast('Заполните имя и контакт — без них не ответим');return;}
+    var subject='Заявка на демо DELSTAY — '+name;
+    var body='Имя: '+name+'\nКонтакт: '+contact+'\nОбъект: '+(object||'не указано')+'\nЧто важно решить: '+(msg||'—')+'\n\nЗаявка отправлена с лендинга DELSTAY.';
+    var url='mailto:delstayrussia@mail.ru?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+    window.location.href=url;
+    showToast('Открываем почтовый клиент — письмо уйдёт на delstayrussia@mail.ru');
+  });
+})();
+</script>
+</body>
+</html>
